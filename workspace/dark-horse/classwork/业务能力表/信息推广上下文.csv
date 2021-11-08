@@ -1,0 +1,8 @@
+角色,Method,URI,业务能力,业务能力服务（对应架构图中的业务能力服务）
+广告主,POST,/promotions-requests/{id}/proposal,提供信息推广方案,信息推广服务
+广告主,POST,/promotions,申请对租赁信息进行推广,信息推广服务
+推广商,POST,/promotions/{id}/confirmation,确认信息推广,信息推广服务
+广告商,POST,/promotions/{id}/cancellations,取消推广,信息推广服务
+推广商,POST,/promotions/{id}/cancellations/{id}/confirmation,确认取消推广,信息推广服务
+推广商,POST,/promotions/{id}/payments,请求支付推广费用,信息推广服务
+广告主,POST,/promotions/{id}/payments/{id}/confirmation,确认支付推广费用,信息推广服务

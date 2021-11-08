@@ -1,0 +1,4 @@
+角色,Method,URI,业务能力,业务能力服务（对应架构图中的业务能力服务）
+监测请求方,POST,/monitoring,创建监测请求,三方数据监测服务
+监测请求方,GET,/monitoring/{id},查看数据监测结果,三方数据监测服务
+三方支付服务,POST,/monitoring/{id}/confirmation,更新支付状态,三方支付系统

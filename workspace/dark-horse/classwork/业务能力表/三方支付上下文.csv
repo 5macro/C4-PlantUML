@@ -1,0 +1,3 @@
+角色,Method,URI,业务能力,业务能力服务（对应架构图中的业务能力服务）
+支付用户,POST,/payments,创建支付请求,三方支付系统
+三方支付服务,POST,/payments/{id}/confirmation,更新支付状态,三方支付系统

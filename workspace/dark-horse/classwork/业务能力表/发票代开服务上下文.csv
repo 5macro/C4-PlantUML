@@ -1,0 +1,4 @@
+角色,Method,URI,业务能力,业务能力服务（对应架构图中的业务能力服务）
+发票客户,POST,/invoices,代开发票申请,发票代开服务
+发票客户,GET,/incoices/{id},查看发票,发票代开服务
+发票代开服务商,POST,/incoices/{id}/confirmation,更新发票,发票代开服务
