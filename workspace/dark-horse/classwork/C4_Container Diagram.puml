@@ -3,65 +3,56 @@
 ' uncomment the following line and comment the first to use locally
 ' !include C4_Container.puml
 
-' LAYOUT_TOP_DOWN()
-' LAYOUT_AS_SKETCH()
+'LAYOUT_TOP_DOWN()
+'LAYOUT_LEFT_RIGHT()
+LAYOUT_LANDSCAPE()
 LAYOUT_WITH_LEGEND()
 
-Person(customer, Customer, "A customer of the bank, with personal bank accounts")
+Person(customer, Customer, "思沃租房的用户")
 
-System_Boundary(c1, "业务能力服务") {
-    Container(web_app, "Web Application", "Java, Spring MVC", "Delivers the static content and the Internet banking SPA")
-    Container(spa, "Single-Page App", "JavaScript, Angular", "Provides all the Internet banking functionality to cutomers via their web browser")
-    Container(mobile_app, "Mobile App", "C#, Xamarin", "Provides a limited subset of the Internet banking functionality to customers via their mobile device")
-    ContainerDb(database, "Database", "SQL Database", "Stores user registration information, hashed auth credentials, access logs, etc.")
-    Container(backend_api, "API Application", "Java, Docker Container", "Provides Internet banking functionality via API")
+System_Boundary(siwo_rental_platform, "思沃租房") {
+    System_Boundary(technology_components, "技术组件") {
+        Container(siwo_rentals_portal, "思沃租房portal", "JavaScript, HTML", "通过用户的浏览器提供和思沃租房相关的所有功能")
+        Container(bff, "BFF", "RESTful API", "Backend for frontend")
+        Container(unified_payment_gateway, "统一支付网关", "RESTful API", "对外提供稳定的支付功能")
+        Container(unified_invoice_gateway, "统一发表代开网关", "RESTful API", "对外提供稳定的发票代开功能")
+        Container(unified_data_monitoring_gateway, "统一数据监测网关", "RESTful API", "对外提供稳定的数据监测功能")
+    }
+
+    System_Boundary(business_svc, "业务能力服务") {
+        Container(pre_charge_service, "预充值服务", "RESTful API", "提供预充值业务相关能力")
+    }
+
+    System_Boundary(domain_svc, "领域服务") {
+        Container(user_management_service, "用户管理服务", "", "Provide all the user management functionality to customers and siwo rentral platform via REST API")
+        Container(rental_information_management_service, "房屋租赁信息管理服务", "", "Provide all the rental information management functionality to customers and siwo rentral platform via REST API")
+    }
+
+    System_Boundary(c4, "包含领域逻辑的业务能力服务") {
+        Container(information_promotion_service, "信息推广服务", "Java, Spring MVC", "Delivers the static content and the Internet banking SPA")
+    }
 }
 
-System_Boundary(c2, "外部/三方系统") {
-    Container(web_app, "Web Application", "Java, Spring MVC", "Delivers the static content and the Internet banking SPA")
-    Container(spa, "Single-Page App", "JavaScript, Angular", "Provides all the Internet banking functionality to cutomers via their web browser")
-    Container(mobile_app, "Mobile App", "C#, Xamarin", "Provides a limited subset of the Internet banking functionality to customers via their mobile device")
-    ContainerDb(database, "Database", "SQL Database", "Stores user registration information, hashed auth credentials, access logs, etc.")
-    Container(backend_api, "API Application", "Java, Docker Container", "Provides Internet banking functionality via API")
+System_Boundary(3rd_party_system, "外部/三方系统") {
+    System_Ext(three_party_payment_service, "三方支付服务", "HTTPS", "微信，支付宝等第三方支付系统")
+    System_Ext(invoice_service, "发票代开服务", "HTTPS", "提供发票代开的三方服务")
+    System_Ext(adx_data_monitoring_system, "ADX数据监测系统", "HTTPS", "提供数据监测服务")
 }
 
-System_Boundary(c3, "领域服务") {
-    Container(web_app, "Web Application", "Java, Spring MVC", "Delivers the static content and the Internet banking SPA")
-    Container(spa, "Single-Page App", "JavaScript, Angular", "Provides all the Internet banking functionality to cutomers via their web browser")
-    Container(mobile_app, "Mobile App", "C#, Xamarin", "Provides a limited subset of the Internet banking functionality to customers via their mobile device")
-    ContainerDb(database, "Database", "SQL Database", "Stores user registration information, hashed auth credentials, access logs, etc.")
-    Container(backend_api, "API Application", "Java, Docker Container", "Provides Internet banking functionality via API")
-}
+Rel(customer, siwo_rentals_portal, "Uses", "HTTPS")
 
-System_Boundary(c4, "包含领域逻辑的业务能力服务") {
-    Container(web_app, "Web Application", "Java, Spring MVC", "Delivers the static content and the Internet banking SPA")
-    Container(spa, "Single-Page App", "JavaScript, Angular", "Provides all the Internet banking functionality to cutomers via their web browser")
-    Container(mobile_app, "Mobile App", "C#, Xamarin", "Provides a limited subset of the Internet banking functionality to customers via their mobile device")
-    ContainerDb(database, "Database", "SQL Database", "Stores user registration information, hashed auth credentials, access logs, etc.")
-    Container(backend_api, "API Application", "Java, Docker Container", "Provides Internet bankinh
-    g functionality via API")
-}
+Rel(siwo_rentals_portal, bff, "Uses", "HTTPS")
+Rel(bff, user_management_service, "Uses", "HTTPS")
+Rel(bff, rental_information_management_service, "Uses", "HTTPS")
+Rel(bff, information_promotion_service, "Uses", "HTTPS")
+Rel(bff, pre_charge_service, "Uses", "HTTPS")
 
-System_Boundary(c5, "技术组件") {
-    Container(spa, "Single-Page App", "JavaScript, Angular", "Provides all the Internet banking functionality to cutomers via their web browser")
-    Container(mobile_app, "Mobile App", "C#, Xamarin", "Provides a limited subset of the Internet banking functionality to customers via their mobile device")
-    ContainerDb(database, "Database", "SQL Database", "Stores user registration information, hashed auth credentials, access logs, etc.")
-    Container(backend_api, "API Application", "Java, Docker Container", "Provides Internet banking functionality via API")
-}
+Rel(information_promotion_service, unified_data_monitoring_gateway, "Uses", "HTTPS")
+Rel(unified_data_monitoring_gateway, adx_data_monitoring_system, "Uses", "HTTPS")
+Rel(information_promotion_service, pre_charge_service, "Uses", "HTTPS")
 
-System_Ext(email_system, "E-Mail System", "The internal Microsoft Exchange system")
-System_Ext(banking_system, "Mainframe Banking System", "Stores all of the core banking information about customers, accounts, transactions, etc.")
-
-Rel(customer, web_app, "Uses", "HTTPS")
-Rel(customer, spa, "Uses", "HTTPS")
-Rel(customer, mobile_app, "Uses")
-
-Rel_Neighbor(web_app, spa, "Delivers")
-Rel(spa, backend_api, "Uses", "async, JSON/HTTPS")
-Rel(mobile_app, backend_api, "Uses", "async, JSON/HTTPS")
-Rel_Back_Neighbor(database, backend_api, "Reads from and writes to", "sync, JDBC")
-
-Rel_Back(customer, email_system, "Sends e-mails to")
-Rel_Back(email_system, backend_api, "Sends e-mails using", "sync, SMTP")
-Rel_Neighbor(backend_api, banking_system, "Uses", "sync/async, XML/HTTPS")
+Rel(pre_charge_service, unified_payment_gateway, "Uses", "HTTPS")
+Rel(unified_payment_gateway, three_party_payment_service, "Uses", "HTTPS")
+Rel(pre_charge_service, unified_invoice_gateway, "Uses", "HTTPS")
+Rel(unified_invoice_gateway, invoice_service, "Uses", "HTTPS")
 @enduml
