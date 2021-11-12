@@ -40,6 +40,7 @@ System_Boundary(3rd_party_system, "外部/三方系统") {
 Rel(customer, siwo_rentals_portal, "Uses", "HTTPS")
 
 Rel(siwo_rentals_portal, bff, "Uses", "HTTPS")
+Rel(siwo_rentals_portal, adx_data_monitoring_system, "Put metric", "HTTPS")
 Rel(bff, user_management_service, "Uses", "HTTPS")
 Rel(bff, rental_information_management_service, "Uses", "HTTPS")
 Rel(bff, information_promotion_service, "Uses", "HTTPS")

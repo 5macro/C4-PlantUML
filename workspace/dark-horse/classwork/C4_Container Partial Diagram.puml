@@ -1,57 +1,20 @@
 @startuml
-!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
 ' uncomment the following line and comment the first to use locally
-' !include C4_Container.puml
+' !include C4_Component.puml
 
-LAYOUT_LEFT_RIGHT()
 LAYOUT_WITH_LEGEND()
 
-Person(customer, Customer, "用户")
+'Container(bff, "BFF", "RESTful API", "Backend for frontend")
+Container(information_promotion_service, "信息推广服务", "RESTful API", "包含了报价规则引擎的信息推广管理服务")
+Container(payment_mq, "MQ", "HTTPS", "Payment event topic")
+'ContainerDb(db, "Database", "Postgresql", "存储所有的信息推广记录")
+'Container(unified_data_monitoringing_gateway, "统一数据监测网关", "RESTful API", "提供稳定的数据监测接口")
+Container(pre_charge_service, "预充值服务", "RESTful API", "提供预充值业务相关能力")
 
-System_Boundary(siwo_rental_platform, "思沃租房") {
-    System_Boundary(technology_components, "技术组件") {
-        Container(siwo_rentals_portal, "思沃租房portal", "JavaScript, HTML", "提供和思沃租房相关的用户前端交互")
-        Container(bff, "BFF", "RESTful API", "Backend for frontend")
-    }
-
-    System_Boundary(business_svc, "业务能力服务") {
-        Container(pre_charge_service, "预充值服务", "RESTful API", "提供预充值业务相关能力")
-    }
-
-    System_Boundary(domain_svc, "领域服务") {
-        Container(user_management_service, "用户管理服务", "RESTful API", "提供用户管理能力")
-        Container(rental_information_management_service, "房屋租赁信息管理服务", "RESTful API", "提供房屋租赁信息管理功能")
-        Container(unified_payment_gateway, "统一支付网关", "RESTful API", "提供稳定的支付接口")
-        Container(unified_invoice_gateway, "统一发票代开网关", "RESTful API", "提供稳定的发票代开接口")
-        Container(unified_data_monitoring_gateway, "统一数据监测网关", "RESTful API", "提供稳定的数据监测接口")
-    }
-
-    System_Boundary(business_svc_with_domain, "包含领域逻辑的业务能力服务") {
-        Container(information_promotion_service, "信息推广服务", "RESTful API", "包含了报价规则引擎的信息推广管理服务")
-    }
-}
-
-System_Boundary(3rd_party_system, "外部/三方系统") {
-    System_Ext(three_party_payment_service, "三方支付服务", "HTTPS", "微信，支付宝等第三方支付系统")
-    System_Ext(invoice_service, "发票代开服务", "HTTPS", "提供发票代开的三方服务")
-    System_Ext(adx_data_monitoring_system, "ADX数据监测系统", "HTTPS", "提供数据监测服务")
-}
-
-Rel(customer, siwo_rentals_portal, "Uses", "HTTPS")
-
-Rel(siwo_rentals_portal, bff, "Uses", "HTTPS")
-Rel(bff, user_management_service, "Uses", "HTTPS")
-Rel(bff, rental_information_management_service, "Uses", "HTTPS")
-Rel(bff, information_promotion_service, "Uses", "HTTPS")
-Rel(bff, pre_charge_service, "Uses", "HTTPS")
-
-Rel(information_promotion_service, unified_data_monitoring_gateway, "Uses", "HTTPS")
-Rel(unified_data_monitoring_gateway, adx_data_monitoring_system, "Uses", "HTTPS")
-Rel(information_promotion_service, pre_charge_service, "Uses", "HTTPS")
-
-Rel(pre_charge_service, unified_payment_gateway, "Uses", "HTTPS")
-Rel(unified_payment_gateway, three_party_payment_service, "Uses", "HTTPS")
-Rel(pre_charge_service, unified_invoice_gateway, "Uses", "HTTPS")
-Rel(unified_invoice_gateway, invoice_service, "Uses", "HTTPS")
-
+'Rel(bff, information_promotion_service, "Uses", "JSON/HTTPS")
+'Rel(information_promotion_service, db, "sync read/write to")
+'Rel(information_promotion_service, unified_data_monitoringing_gateway, "Uses")
+Rel(information_promotion_service, payment_mq, "publish", "JSON/HTTPS")
+Rel(pre_charge_service, payment_mq, "subscribe", "JSON/HTTPS")
 @enduml

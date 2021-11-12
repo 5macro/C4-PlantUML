@@ -6,7 +6,6 @@
 LAYOUT_WITH_LEGEND()
 
 Container(bff, "BFF", "RESTful API", "Backend for frontend")
-Container(monitor_mq, "MQ", "HTTPS", "Data monitor task topic")
 
 Container_Boundary(api, "信息推广服务") {
     Component(presentation, "Presentation", "Presentation layer", "")
@@ -14,22 +13,20 @@ Container_Boundary(api, "信息推广服务") {
     Component(domain, "Domain", "Domain Layer", "")
     Component(infrastructure, "Infrastructure", "Infrastructure layer", "")
 
-    Rel(presentation, application, "Write")
+    Rel(presentation, application, "Uses")
     Rel(application, domain, "Uses")
     Rel(infrastructure, domain, "Uses")
-    Rel(presentation, infrastructure, "Read")
+    Rel(presentation, infrastructure, "Uses")
 }
 
 Container(payment_mq, "MQ", "HTTPS", "Payment event topic")
 ContainerDb(db, "Database", "Postgresql", "存储所有的信息推广记录")
-Container(unified_data_monitoring_gateway, "统一数据监测网关", "RESTful API", "提供稳定的数据监测接口")
+Container(unified_data_monitoringing_gateway, "统一数据监测网关", "RESTful API", "提供稳定的数据监测接口")
 Container(pre_charge_service, "预充值服务", "RESTful API", "提供预充值业务相关能力")
 
 Rel(bff, presentation, "Uses", "JSON/HTTPS")
 Rel(infrastructure, db, "sync read/write to")
-Rel(infrastructure, monitor_mq, "publish", "JSON/HTTPS")
-Rel(unified_data_monitoring_gateway, monitor_mq, "subscribe", "JSON/HTTPS")
-Rel(unified_data_monitoring_gateway, presentation, "sync")
+Rel(infrastructure, unified_data_monitoringing_gateway, "Uses")
 Rel(infrastructure, payment_mq, "publish", "JSON/HTTPS")
 Rel(pre_charge_service, payment_mq, "subscribe", "JSON/HTTPS")
 @enduml
